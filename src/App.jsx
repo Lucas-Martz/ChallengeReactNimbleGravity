@@ -1,8 +1,14 @@
 import { useEffect, useState } from "react";
 import { getCandidateByEmail, getJobs } from "./api";
 import JobList from "./components/JobList";
+import "./App.css";
 
 export default function App() {
+  const profile = {
+    fullName: "Lucas Martinez",
+    email: "martinezdlucas5@gmail.com",
+  };
+
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -13,20 +19,20 @@ export default function App() {
   const [errorJobs, setErrorJobs] = useState("");
 
   useEffect(() => {
-  async function cargarJobs() {
-    setErrorJobs("");
-    setLoadingJobs(true);
-    try {
-      const data = await getJobs();
-      setJobs(data);
-    } catch (e) {
-      setErrorJobs(e?.message || "Error cargando posiciones");
-    } finally {
-      setLoadingJobs(false);
+    async function cargarJobs() {
+      setErrorJobs("");
+      setLoadingJobs(true);
+      try {
+        const data = await getJobs();
+        setJobs(data);
+      } catch (e) {
+        setErrorJobs(e?.message || "Error cargando posiciones");
+      } finally {
+        setLoadingJobs(false);
+      }
     }
-  }
 
-  cargarJobs();
+    cargarJobs();
   }, []);
 
   async function onBuscar() {
@@ -50,33 +56,34 @@ export default function App() {
     }
   }
 
-  
-
   return (
-    <div style={{ maxWidth: 900, margin: "40px auto", padding: 16, fontFamily: "system-ui, Arial" }}>
-      <h1 style={{ marginTop: 0 }}>Bot Filter — Step 2</h1>
+    <div className="app-shell">
+      <header className="hero">
+        <p className="hero-kicker">Challenge React Nimble Gravity</p>
+        <p className="hero-profile">
+          {profile.fullName} - {profile.email}
+        </p>
+      </header>
 
-      <div style={{ border: "1px solid #eee", borderRadius: 10, padding: 16 }}>
-        <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+      <section className="panel">
+        <h2 className="section-title">Step 2 - Candidato</h2>
+
+        <div className="search-row">
           <input
+            className="input"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="tu.email@ejemplo.com"
-            style={{ padding: 8, borderRadius: 6, border: "1px solid #ccc", minWidth: 320 }}
           />
-          <button
-            onClick={onBuscar}
-            disabled={loading}
-            style={{ padding: "8px 12px", borderRadius: 6, border: "1px solid #333", cursor: "pointer" }}
-          >
+          <button className="btn" onClick={onBuscar} disabled={loading}>
             {loading ? "Buscando..." : "Buscar"}
           </button>
         </div>
 
-        {error ? <div style={{ marginTop: 10, color: "crimson" }}>{error}</div> : null}
+        {error ? <div className="feedback feedback-error">{error}</div> : null}
 
         {candidate ? (
-          <div style={{ marginTop: 12, fontSize: 14 }}>
+          <div className="candidate-grid">
             <div><b>firstName:</b> {candidate.firstName}</div>
             <div><b>lastName:</b> {candidate.lastName}</div>
             <div><b>email:</b> {candidate.email}</div>
@@ -85,21 +92,17 @@ export default function App() {
             <div><b>applicationId:</b> {candidate.applicationId}</div>
           </div>
         ) : null}
-      </div>
+      </section>
 
-      <hr style={{ margin: "16px 0", borderColor: "#333" }} />
+      <section className="panel">
+        <h2 className="section-title">Step 3 - Posiciones</h2>
 
-      <h2 style={{ margin: "0 0 10px" }}>Step 3 — Posiciones</h2>
+        {loadingJobs ? <div className="feedback">Cargando posiciones...</div> : null}
+        {errorJobs ? <div className="feedback feedback-error">{errorJobs}</div> : null}
 
-      {loadingJobs ? <div>Cargando posiciones...</div> : null}
-      {errorJobs ? <div style={{ marginTop: 8, color: "crimson" }}>{errorJobs}</div> : null}
-
-      {!loadingJobs && !errorJobs ? <JobList jobs={jobs} /> : null}
-
-
+        {!loadingJobs && !errorJobs ? <JobList jobs={jobs} candidate={candidate} /> : null}
+      </section>
     </div>
-
   );
-
 }
 
