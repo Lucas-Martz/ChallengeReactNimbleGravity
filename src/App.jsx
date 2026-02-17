@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { getCandidateByEmail, getJobs } from "./api";
+import JobList from "./components/JobList";
 
 export default function App() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [candidate, setCandidate] = useState(null);
-  
+
   const [jobs, setJobs] = useState([]);
   const [loadingJobs, setLoadingJobs] = useState(false);
   const [errorJobs, setErrorJobs] = useState("");
@@ -93,15 +94,8 @@ export default function App() {
       {loadingJobs ? <div>Cargando posiciones...</div> : null}
       {errorJobs ? <div style={{ marginTop: 8, color: "crimson" }}>{errorJobs}</div> : null}
 
-      {!loadingJobs && !errorJobs ? (
-        <ul style={{ marginTop: 10 }}>
-          {jobs.map((job) => (
-            <li key={job.id}>
-              <b>{job.title}</b> <span style={{ color: "#aaa" }}>({job.id})</span>
-            </li>
-          ))}
-        </ul>
-      ) : null}
+      {!loadingJobs && !errorJobs ? <JobList jobs={jobs} /> : null}
+
 
     </div>
 
