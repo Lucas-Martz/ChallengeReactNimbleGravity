@@ -27,3 +27,7 @@ export async function getCandidateByEmail(email) {
   const qs = new URLSearchParams({ email });
   return request(`/api/candidate/get-by-email?${qs.toString()}`);
 }
+
+export async function getJobs() {
+  return request(`/api/jobs/get-list`);
+}
