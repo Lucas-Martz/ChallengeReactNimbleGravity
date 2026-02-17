@@ -1,11 +1,32 @@
-import { useState } from "react";
-import { getCandidateByEmail } from "./api";
+import { useEffect, useState } from "react";
+import { getCandidateByEmail, getJobs } from "./api";
 
 export default function App() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [candidate, setCandidate] = useState(null);
+  
+  const [jobs, setJobs] = useState([]);
+  const [loadingJobs, setLoadingJobs] = useState(false);
+  const [errorJobs, setErrorJobs] = useState("");
+
+  useEffect(() => {
+  async function cargarJobs() {
+    setErrorJobs("");
+    setLoadingJobs(true);
+    try {
+      const data = await getJobs();
+      setJobs(data);
+    } catch (e) {
+      setErrorJobs(e?.message || "Error cargando posiciones");
+    } finally {
+      setLoadingJobs(false);
+    }
+  }
+
+  cargarJobs();
+  }, []);
 
   async function onBuscar() {
     setError("");
@@ -27,6 +48,8 @@ export default function App() {
       setLoading(false);
     }
   }
+
+  
 
   return (
     <div style={{ maxWidth: 900, margin: "40px auto", padding: 16, fontFamily: "system-ui, Arial" }}>
@@ -62,7 +85,27 @@ export default function App() {
           </div>
         ) : null}
       </div>
+
+      <hr style={{ margin: "16px 0", borderColor: "#333" }} />
+
+      <h2 style={{ margin: "0 0 10px" }}>Step 3 — Posiciones</h2>
+
+      {loadingJobs ? <div>Cargando posiciones...</div> : null}
+      {errorJobs ? <div style={{ marginTop: 8, color: "crimson" }}>{errorJobs}</div> : null}
+
+      {!loadingJobs && !errorJobs ? (
+        <ul style={{ marginTop: 10 }}>
+          {jobs.map((job) => (
+            <li key={job.id}>
+              <b>{job.title}</b> <span style={{ color: "#aaa" }}>({job.id})</span>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+
     </div>
+
   );
+
 }
 
