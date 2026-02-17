@@ -31,3 +31,12 @@ export async function getCandidateByEmail(email) {
 export async function getJobs() {
   return request(`/api/jobs/get-list`);
 }
+
+export async function applyToJob({ uuid, jobId, candidateId, applicationId, repoUrl }) {
+
+  return request(`/api/candidate/apply-to-job`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ uuid, jobId, candidateId, applicationId, repoUrl }),
+  });
+}

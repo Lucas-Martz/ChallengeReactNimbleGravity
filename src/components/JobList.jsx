@@ -1,10 +1,10 @@
 import JobItem from "./JobItem";
 
-export default function JobList({ jobs }) {
+export default function JobList({ jobs, candidate }) {
   return (
-    <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+    <ul className="job-list">
       {jobs.map((job) => (
-        <JobItem key={job.id} job={job} />
+        <JobItem key={job.id} job={job} candidate={candidate} />
       ))}
     </ul>
   );
